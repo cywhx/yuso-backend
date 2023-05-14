@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @from <a href="https://yupi.icu">编程导航知识星球</a>
  */
 // 取消注释后，每次启动 springboot 项目时会执行一次run方法
-//@Component
+@Component
 @Slf4j
 public class FetchlnitPostList implements CommandLineRunner {
 

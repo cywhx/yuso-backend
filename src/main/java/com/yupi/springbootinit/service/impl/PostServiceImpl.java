@@ -323,51 +323,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
                 this.getQueryWrapper(postQueryRequest));
         return this.getPostVOPage(postPage,request);
     }
-    @Override
-    public List<String> getSearchPrompt(String keyword){
-
-        @Data
-        class Temp{
-            Float score;
-            String text;
-
-            public Temp(Float score, String text) {
-                this.score = score;
-                this.text = text;
-            }
-        }
-        SuggestBuilder suggestBuilder = new SuggestBuilder()
-                .addSuggestion("suggestionTitle", new CompletionSuggestionBuilder("titleSuggestion").prefix(keyword));
-        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withSuggestBuilder(suggestBuilder).build();
-
-        HashSet<Temp> temps = new HashSet<>();
-        SearchHits<PostEsDTO> searchHits = elasticsearchRestTemplate.search(searchQuery, PostEsDTO.class);
-        List<Suggest.Suggestion<? extends Suggest.Suggestion.Entry<? extends Suggest.Suggestion.Entry.Option>>> suggestions = searchHits.getSuggest().getSuggestions();
-        // suggestions包含了我们add的所有suggestion，这里只有一个（suggestionTitle），因此自己清楚地情况下直接去索引为0的suggestion也可以
-        for (int i = 0; i < suggestions.size(); i++) {
-            CompletionSuggestion<CompletionSuggestion.Entry<CompletionSuggestion.Entry.Option>> suggestion = (CompletionSuggestion<CompletionSuggestion.Entry<CompletionSuggestion.Entry.Option>>) suggestions.get(i);
-            // 一个entry对应一个suggestion中一个关键词（也就是一个prefix）的搜索结果，只有一个的情况下可以直接取
-            List<CompletionSuggestion.Entry<CompletionSuggestion.Entry<CompletionSuggestion.Entry.Option>>> entries = suggestion.getEntries();
-            for (CompletionSuggestion.Entry<CompletionSuggestion.Entry<CompletionSuggestion.Entry.Option>> entry : entries) {
-                // options保存的是最终的结果
-                List<CompletionSuggestion.Entry.Option<CompletionSuggestion.Entry<CompletionSuggestion.Entry.Option>>> options = entry.getOptions();
-                for (CompletionSuggestion.Entry.Option<CompletionSuggestion.Entry<CompletionSuggestion.Entry.Option>> option : options) {
-                    float score = option.getScore();
-                    SearchHit<CompletionSuggestion.Entry<CompletionSuggestion.Entry.Option>> searchHit1 = option.getSearchHit();
-                    Object content = searchHit1.getContent();
-                    PostEsDTO postEsDTO = new JSONObject(content).toBean(PostEsDTO.class);
-                    temps.add(new Temp(score, postEsDTO.getTitle()));
-
-                }
-            }
-        }
-        System.out.println(temps);
-        List<String> suggestionText = temps.stream().map(Temp::getText).collect(Collectors.toList());
-
-        return suggestionText;
-    }
-
 }
 
 

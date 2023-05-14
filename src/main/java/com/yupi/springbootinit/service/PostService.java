@@ -7,7 +7,6 @@ import com.yupi.springbootinit.model.dto.post.PostQueryRequest;
 import com.yupi.springbootinit.model.entity.Post;
 import com.yupi.springbootinit.model.vo.PostVO;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * 帖子服务
@@ -67,10 +66,5 @@ public interface PostService extends IService<Post> {
      */
     Page<PostVO> listPostVOByPage(PostQueryRequest postQueryRequest, HttpServletRequest request);
 
-    /**
-     * 搜素提示功能
-     * @param keyword
-     * @return
-     */
-    List<String> getSearchPrompt(String keyword);
+
 }

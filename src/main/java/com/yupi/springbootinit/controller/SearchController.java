@@ -42,13 +42,8 @@ public class SearchController {
     public BaseResponse<SearchVO> searchAll(@RequestBody SearchRequest searchRequest, HttpServletRequest request) {
         return ResultUtils.success(searchFacade.searchAll(searchRequest, request));
     }
-    @GetMapping("/getSearchPrompt")
-    public BaseResponse getSearchPrompt(String keyword){
 
-        List<String> searchPrompt = postService.getSearchPrompt(keyword);
 
-        return ResultUtils.success(searchPrompt);
-    }
 
 
 }
